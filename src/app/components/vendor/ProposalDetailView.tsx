@@ -624,12 +624,7 @@ export function ProposalDetailView({
                     </div>
                     {getReviewStatusBadge(techCardStatus === 'approved' ? 'technical_approved' : techCardStatus)}
                   </div>
-                  {proposalState.technicalRemark && (
-                    <div className="text-xs text-gray-600 bg-gray-50 p-2.5 rounded-md border border-gray-100 mt-1">
-                      <span className="font-semibold block text-gray-700 mb-0.5">{t('Remarks')}:</span>
-                      <p className="italic font-normal">"{proposalState.technicalRemark}"</p>
-                    </div>
-                  )}
+
                 </CardContent>
               </Card>
             )}
@@ -648,12 +643,7 @@ export function ProposalDetailView({
                   </div>
                   {getReviewStatusBadge(commCardStatus === 'approved' ? 'commercial_approved' : commCardStatus)}
                 </div>
-                {proposalState.commercialRemark && (
-                  <div className="text-xs text-gray-600 bg-gray-50 p-2.5 rounded-md border border-gray-100 mt-1">
-                    <span className="font-semibold block text-gray-700 mb-0.5">{t('Remarks')}:</span>
-                    <p className="italic font-normal">"{proposalState.commercialRemark}"</p>
-                  </div>
-                )}
+
               </CardContent>
             </Card>
           </div>

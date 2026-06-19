@@ -627,7 +627,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
             value="chats" 
             className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)] flex items-center gap-1.5"
           >
-            {t('Vendor Chats')}
+            {t('Vendor Discussions')}
             {totalUnreadChats > 0 && (
               <span className="bg-red-500 text-white font-bold text-[9px] h-4 min-w-4 px-1 flex items-center justify-center rounded-full border-none leading-none animate-pulse">
                 {totalUnreadChats}
@@ -837,7 +837,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
           </Card>
         </TabsContent>
 
-        {/* TAB 2: VENDOR CHATS */}
+        {/* TAB 2: VENDOR DISCUSSIONS */}
         <TabsContent value="chats" className="focus:outline-none">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
             {/* Conversations list sidebar */}

@@ -238,12 +238,12 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        {/* Active Vendor Chats */}
+        {/* Active Vendor Discussions */}
         <Card className="flex flex-col h-[500px] rounded-card">
           <CardHeader className="pb-3 border-b border-[#E5E5E5]">
             <CardTitle className="flex items-center gap-2 font-bold">
               <MessageSquare className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-              {t("Active Vendor Chats")}
+              {t("Active Vendor Discussions")}
             </CardTitle>
 
           </CardHeader>

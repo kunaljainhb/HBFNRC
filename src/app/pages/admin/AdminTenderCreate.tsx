@@ -240,7 +240,7 @@ export default function AdminTenderCreate() {
   const renderStepIndicator = () => {
     const steps = [
       { number: 1, label: t('Tender Details') },
-      { number: 2, label: t('Visibility & Publish') }
+      { number: 2, label: t('Review & Publish') }
     ];
 
     return (
@@ -779,11 +779,11 @@ export default function AdminTenderCreate() {
           {renderStep1()}
           {renderStep2()}
           {renderStep3()}
+          {renderStep4()}
         </div>
       )}
       {step === 2 && (
         <div className="space-y-6">
-          {renderStep4()}
           {renderStep5()}
         </div>
       )}

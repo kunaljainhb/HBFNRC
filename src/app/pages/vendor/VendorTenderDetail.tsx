@@ -122,7 +122,7 @@ export default function VendorTenderDetail() {
             value="messages" 
             className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
           >
-            {t('Vendor Chat')}
+            {t('Vendor Discussion')}
           </TabsTrigger>
           <TabsTrigger 
             value="proposal" 

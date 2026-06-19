@@ -122,7 +122,7 @@ export default function AdminMessages() {
         {/* Left Column: Thread List */}
         <div className="w-full sm:w-[320px] md:w-[360px] border-r border-gray-150 flex flex-col shrink-0">
           <div className="p-4 bg-gray-50/50 border-b border-gray-150/70">
-            <h2 className="font-bold text-gray-800 text-sm tracking-wide uppercase">{t('Vendor Chats')}</h2>
+            <h2 className="font-bold text-gray-800 text-sm tracking-wide uppercase">{t('Vendor Discussions')}</h2>
           </div>
           <div className="flex-1 overflow-y-auto divide-y divide-gray-100">
             {threads.map(thread => (

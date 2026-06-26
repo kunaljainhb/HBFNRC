@@ -232,11 +232,11 @@ export function Header({ role, userName }: HeaderProps) {
                 {t('Vendor Login')}
               </Button>
               <Button
-                onClick={() => navigate('/admin/login')}
+                onClick={() => navigate('/vendor/register')}
                 style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
                 className="text-white hover:opacity-90"
               >
-                {t('Admin Login')}
+                {t('Vendor Registration')}
               </Button>
             </div>
           ) : (

@@ -85,9 +85,9 @@ function LandingHeader() {
             </Button>
             <Button 
               className="bg-[#B59969] hover:bg-[#a3834a] text-[#3D3935] rounded-xl font-semibold shadow-md shadow-[#B59969]/20"
-              onClick={() => navigate('/admin/login')}
+              onClick={() => navigate('/vendor/register')}
             >
-              {t('Admin Login')}
+              {t('Vendor Registration')}
             </Button>
           </div>
 
@@ -121,7 +121,7 @@ function LandingHeader() {
               {language === 'en' ? 'العربية' : 'English'}
             </Button>
             <Button variant="outline" className="w-full border-[#B59969] text-[#B59969] rounded-xl" onClick={() => navigate('/vendor/login')}>{t('Vendor Login')}</Button>
-            <Button className="w-full bg-[#B59969] text-[#3D3935] rounded-xl" onClick={() => navigate('/admin/login')}>{t('Admin Login')}</Button>
+            <Button className="w-full bg-[#B59969] text-[#3D3935] rounded-xl" onClick={() => navigate('/vendor/register')}>{t('Vendor Registration')}</Button>
           </div>
         </div>
       )}

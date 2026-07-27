@@ -39,6 +39,9 @@ import AdminMasterData from '@/app/pages/admin/AdminMasterData';
 import AdminReports from '@/app/pages/admin/AdminReports';
 import AdminConfig from '@/app/pages/admin/AdminConfig';
 import AdminExternalRating from '@/app/pages/admin/AdminExternalRating';
+import AdminProfile from '@/app/pages/admin/AdminProfile';
+import AdminContentManagement from '@/app/pages/admin/AdminContentManagement';
+import AdminContentEdit from '@/app/pages/admin/AdminContentEdit';
 
 import VendorNotifications from '@/app/pages/vendor/VendorNotifications';
 import VendorMessages from '@/app/pages/vendor/VendorMessages';
@@ -101,6 +104,9 @@ function AppRoutes() {
   if (path === '/admin/master-data/vendor-rating-question') return <AdminLayout><AdminMasterData defaultTab="rubric" /></AdminLayout>;
   if (path === '/admin/reports') return <AdminLayout><AdminReports /></AdminLayout>;
   if (path === '/admin/config') return <AdminLayout><AdminConfig /></AdminLayout>;
+  if (path === '/admin/profile') return <AdminLayout><AdminProfile /></AdminLayout>;
+  if (path === '/admin/content') return <AdminLayout><AdminContentManagement /></AdminLayout>;
+  if (path.startsWith('/admin/content/edit/')) return <AdminLayout><AdminContentEdit /></AdminLayout>;
   if (path === '/admin/notifications') return <AdminLayout><AdminNotifications /></AdminLayout>;
   if (path === '/admin/messages') return <AdminLayout><AdminMessages /></AdminLayout>;
 

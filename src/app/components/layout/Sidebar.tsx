@@ -14,7 +14,8 @@ import {
   Database,
   BarChart3,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  FileEdit
 } from 'lucide-react';
 import { cn } from '@/app/components/ui/utils';
 
@@ -61,6 +62,8 @@ const adminNavItems: NavItem[] = [
   },
   { name: 'Reports', href: '/admin/reports', icon: BarChart3 },
   { name: 'System Config', href: '/admin/config', icon: Settings },
+  { name: 'Content Management', href: '/admin/content', icon: FileEdit },
+  { name: 'My Profile', href: '/admin/profile', icon: User },
 ];
 
 import { useTranslation } from '@/app/context/LanguageContext';

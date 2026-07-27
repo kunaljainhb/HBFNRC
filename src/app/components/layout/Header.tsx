@@ -253,6 +253,10 @@ export function Header({ role, userName }: HeaderProps) {
               <DropdownMenuContent align="end" className="w-56 rounded-xl shadow-lg border-gray-100">
                 <DropdownMenuLabel>{t('My Account')}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate(role === 'admin' ? '/admin/profile' : '/vendor/profile')} className="cursor-pointer text-gray-700 hover:bg-gray-50 focus:bg-gray-50">
+                  <User className="mr-2 h-4 w-4" />
+                  {t('My Profile')}
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 focus:text-red-700 focus:bg-red-50/50">
                   <LogOut className="mr-2 h-4 w-4" />
                   {t('Logout')}

@@ -17,13 +17,18 @@ import { useTranslation } from '@/app/context/LanguageContext';
 import { cn } from '@/app/components/ui/utils';
 
 interface TenderFormData {
+  tenderType: 'simple' | 'detailed';
   title: string;
+  titleArabic: string;
   categories: string[];
   description: string;
+  descriptionArabic: string;
   eligibilityCriteria: string;
+  eligibilityCriteriaArabic: string;
   estimatedBudget: string;
   submissionDeadline: Date | undefined;
   scopeOfWork: string;
+  scopeOfWorkArabic: string;
   projectStartDate: Date | undefined;
   projectEndDate: Date | undefined;
   milestones: Array<{ title: string; date: string }>;
@@ -42,13 +47,18 @@ export default function AdminTenderCreate() {
       const draft = mockTenders.find(r => r.id === tenderId);
       if (draft) {
         return {
+          tenderType: 'detailed', // Default draft to detailed or could read from draft if available
           title: draft.title || '',
+          titleArabic: '',
           categories: draft.category || [],
           description: draft.description || '',
+          descriptionArabic: '',
           eligibilityCriteria: draft.eligibilityCriteria?.join('\n') || '',
+          eligibilityCriteriaArabic: '',
           estimatedBudget: '',
           submissionDeadline: draft.submissionDeadline ? new Date(draft.submissionDeadline) : undefined,
           scopeOfWork: draft.scopeOfWork || '',
+          scopeOfWorkArabic: '',
           projectStartDate: undefined,
           projectEndDate: undefined,
           milestones: [],
@@ -59,13 +69,18 @@ export default function AdminTenderCreate() {
       }
     }
     return {
+      tenderType: 'detailed',
       title: '',
+      titleArabic: '',
       categories: [],
       description: '',
+      descriptionArabic: '',
       eligibilityCriteria: '',
+      eligibilityCriteriaArabic: '',
       estimatedBudget: '',
       submissionDeadline: undefined,
       scopeOfWork: '',
+      scopeOfWorkArabic: '',
       projectStartDate: undefined,
       projectEndDate: undefined,
       milestones: [],
@@ -133,12 +148,17 @@ export default function AdminTenderCreate() {
 
   const handleSaveDraft = () => {
     const tenderData = {
+      tenderType: formData.tenderType,
       title: formData.title || 'Untitled Tender',
+      titleArabic: formData.titleArabic,
       category: formData.categories.length > 0 ? formData.categories : ['General'],
       description: formData.description,
+      descriptionArabic: formData.descriptionArabic,
       eligibilityCriteria: formData.eligibilityCriteria.split('\n').filter(Boolean),
+      eligibilityCriteriaArabic: formData.eligibilityCriteriaArabic,
       submissionDeadline: formData.submissionDeadline ? format(formData.submissionDeadline, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
       scopeOfWork: formData.scopeOfWork,
+      scopeOfWorkArabic: formData.scopeOfWorkArabic,
       timeline: '3 months',
       status: 'draft' as const,
       attachments: formData.attachments.map(a => ({ name: a.name, url: '#' })),
@@ -167,12 +187,17 @@ export default function AdminTenderCreate() {
 
   const handlePublish = () => {
     const tenderData = {
+      tenderType: formData.tenderType,
       title: formData.title || 'Untitled Tender',
+      titleArabic: formData.titleArabic,
       category: formData.categories.length > 0 ? formData.categories : ['General'],
       description: formData.description,
+      descriptionArabic: formData.descriptionArabic,
       eligibilityCriteria: formData.eligibilityCriteria.split('\n').filter(Boolean),
+      eligibilityCriteriaArabic: formData.eligibilityCriteriaArabic,
       submissionDeadline: formData.submissionDeadline ? format(formData.submissionDeadline, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
       scopeOfWork: formData.scopeOfWork,
+      scopeOfWorkArabic: formData.scopeOfWorkArabic,
       timeline: '3 months',
       status: 'published' as const,
       attachments: formData.attachments.map(a => ({ name: a.name, url: '#' })),
@@ -290,14 +315,63 @@ export default function AdminTenderCreate() {
         <CardTitle className="font-bold text-lg">{t('Basic Tender Information')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="title" className="font-bold">{t('Tender Title *')}</Label>
-          <Input
-            id="title"
-            placeholder={t('Enter Tender title')}
-            value={formData.title}
-            onChange={(e) => updateFormData('title', e.target.value)}
-          />
+        <div className="space-y-3 pb-2 border-b border-gray-100">
+          <Label className="font-bold text-base">{t('Tender Type *')}</Label>
+          <RadioGroup 
+            value={formData.tenderType} 
+            onValueChange={(value: 'simple' | 'detailed') => updateFormData('tenderType', value)}
+            className="flex gap-4"
+          >
+            <label 
+              htmlFor="type-simple"
+              className={cn(
+                "flex items-center space-x-3 border rounded-lg px-4 py-3 cursor-pointer transition-colors flex-1",
+                formData.tenderType === 'simple' ? 'border-[var(--fnrc-primary-green)] bg-green-50/30' : 'border-gray-200 hover:bg-gray-50'
+              )}
+            >
+              <RadioGroupItem value="simple" id="type-simple" />
+              <div className="space-y-1">
+                <span className="font-bold text-sm w-full block text-black">{t('Simple Tender')}</span>
+                <span className="text-xs text-muted-foreground">{t('Only basic information required.')}</span>
+              </div>
+            </label>
+            <label
+              htmlFor="type-detailed"
+              className={cn(
+                "flex items-center space-x-3 border rounded-lg px-4 py-3 cursor-pointer transition-colors flex-1",
+                formData.tenderType === 'detailed' ? 'border-[var(--fnrc-primary-green)] bg-green-50/30' : 'border-gray-200 hover:bg-gray-50'
+              )}
+            >
+              <RadioGroupItem value="detailed" id="type-detailed" />
+              <div className="space-y-1">
+                <span className="font-bold text-sm w-full block text-black">{t('Detailed Tender')}</span>
+                <span className="text-xs text-muted-foreground">{t('All scope and timeline details required.')}</span>
+              </div>
+            </label>
+          </RadioGroup>
+        </div>
+
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="title" className="font-bold">{t('Tender Title (English) *')}</Label>
+            <Input
+              id="title"
+              placeholder={t('Enter Tender title')}
+              value={formData.title}
+              onChange={(e) => updateFormData('title', e.target.value)}
+              dir={language === 'ar' ? 'rtl' : 'ltr'}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="titleArabic" className="font-bold">{t('Tender Title (Arabic) *')}</Label>
+            <Input
+              id="titleArabic"
+              placeholder={t('Enter Tender title in Arabic')}
+              value={formData.titleArabic}
+              onChange={(e) => updateFormData('titleArabic', e.target.value)}
+              dir={language === 'ar' ? 'rtl' : 'ltr'}
+            />
+          </div>
         </div>
 
         <div className="space-y-3">
@@ -322,26 +396,54 @@ export default function AdminTenderCreate() {
           <p className="text-xs text-muted-foreground">{t('Select one or more service categories relevant to this Tender.')}</p>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="description" className="font-bold">{t('Description *')}</Label>
-          <RichTextEditor
-            id="description"
-            placeholder={t('Enter Tender description')}
-            rows={4}
-            value={formData.description}
-            onChange={(e: any) => updateFormData('description', e.target.value)}
-          />
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="description" className="font-bold">{t('Description (English) *')}</Label>
+            <RichTextEditor
+              id="description"
+              placeholder={t('Enter Tender description')}
+              rows={4}
+              value={formData.description}
+              onChange={(e: any) => updateFormData('description', e.target.value)}
+              dir={language === 'ar' ? 'rtl' : 'ltr'}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="descriptionArabic" className="font-bold">{t('Description (Arabic) *')}</Label>
+            <RichTextEditor
+              id="descriptionArabic"
+              placeholder={t('Enter Tender description in Arabic')}
+              rows={4}
+              value={formData.descriptionArabic}
+              onChange={(e: any) => updateFormData('descriptionArabic', e.target.value)}
+              dir={language === 'ar' ? 'rtl' : 'ltr'}
+            />
+          </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="eligibility" className="font-bold">{t('Eligibility Criteria *')}</Label>
-          <RichTextEditor
-            id="eligibility"
-            placeholder={t('Enter eligibility criteria (one per line)')}
-            rows={4}
-            value={formData.eligibilityCriteria}
-            onChange={(e: any) => updateFormData('eligibilityCriteria', e.target.value)}
-          />
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="eligibility" className="font-bold">{t(`Eligibility Criteria (English) ${formData.tenderType === 'detailed' ? '*' : ''}`)}</Label>
+            <RichTextEditor
+              id="eligibility"
+              placeholder={t('Enter eligibility criteria (one per line)')}
+              rows={4}
+              value={formData.eligibilityCriteria}
+              onChange={(e: any) => updateFormData('eligibilityCriteria', e.target.value)}
+              dir={language === 'ar' ? 'rtl' : 'ltr'}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="eligibilityArabic" className="font-bold">{t(`Eligibility Criteria (Arabic) ${formData.tenderType === 'detailed' ? '*' : ''}`)}</Label>
+            <RichTextEditor
+              id="eligibilityArabic"
+              placeholder={t('Enter eligibility criteria in Arabic')}
+              rows={4}
+              value={formData.eligibilityCriteriaArabic}
+              onChange={(e: any) => updateFormData('eligibilityCriteriaArabic', e.target.value)}
+              dir={language === 'ar' ? 'rtl' : 'ltr'}
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -420,20 +522,34 @@ export default function AdminTenderCreate() {
         <CardTitle className="font-bold text-lg">{t('Scope & Timeline')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="scope" className="font-bold">{t('Scope of Work *')}</Label>
-          <RichTextEditor
-            id="scope"
-            placeholder={t('Enter detailed scope of work')}
-            rows={6}
-            value={formData.scopeOfWork}
-            onChange={(e: any) => updateFormData('scopeOfWork', e.target.value)}
-          />
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="scope" className="font-bold">{t(`Scope of Work (English) ${formData.tenderType === 'detailed' ? '*' : ''}`)}</Label>
+            <RichTextEditor
+              id="scope"
+              placeholder={t('Enter detailed scope of work')}
+              rows={6}
+              value={formData.scopeOfWork}
+              onChange={(e: any) => updateFormData('scopeOfWork', e.target.value)}
+              dir={language === 'ar' ? 'rtl' : 'ltr'}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="scopeArabic" className="font-bold">{t(`Scope of Work (Arabic) ${formData.tenderType === 'detailed' ? '*' : ''}`)}</Label>
+            <RichTextEditor
+              id="scopeArabic"
+              placeholder={t('Enter detailed scope of work in Arabic')}
+              rows={6}
+              value={formData.scopeOfWorkArabic}
+              onChange={(e: any) => updateFormData('scopeOfWorkArabic', e.target.value)}
+              dir={language === 'ar' ? 'rtl' : 'ltr'}
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="font-bold">{t('Project Start Date *')}</Label>
+            <Label className="font-bold">{t(`Project Start Date ${formData.tenderType === 'detailed' ? '*' : ''}`)}</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full justify-start text-left font-normal">
@@ -453,7 +569,7 @@ export default function AdminTenderCreate() {
           </div>
 
           <div className="space-y-2">
-            <Label className="font-bold">{t('Project End Date *')}</Label>
+            <Label className="font-bold">{t(`Project End Date ${formData.tenderType === 'detailed' ? '*' : ''}`)}</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full justify-start text-left font-normal">

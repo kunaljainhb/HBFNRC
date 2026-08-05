@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Badge } from '@/app/components/ui/badge';
 import { Button } from '@/app/components/ui/button';
-import { CheckCircle, Download, FileText, Shield, AlertTriangle, Building2, Info, Clock } from 'lucide-react';
+import { CheckCircle, Download, Upload, FileText, Shield, AlertTriangle, Building2, Info, Clock } from 'lucide-react';
 import { mockVendorDocuments } from '@/app/data/mockData';
 import { StatusBadge } from '@/app/components/ui/status-badge';
 import {
@@ -29,12 +29,19 @@ import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
 import { Globe, Phone, Mail, MapPin, Landmark, UserCircle, Briefcase, Lock, KeyRound } from 'lucide-react';
 import { useTranslation } from '@/app/context/LanguageContext';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/app/components/ui/dialog';
 
 export default function VendorProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [registrationStatus, setRegistrationStatus] = useState('Approved');
   const [activeTab, setActiveTab] = useState('company');
   const { t, language } = useTranslation();
+  
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [documentToUpload, setDocumentToUpload] = useState<any>(null);
+  const [uploadIssueDate, setUploadIssueDate] = useState('');
+  const [uploadExpiryDate, setUploadExpiryDate] = useState('');
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
   
   // Detailed vendor data (mock)
   const [vendorData, setVendorData] = useState({
@@ -92,10 +99,44 @@ export default function VendorProfile() {
     issueDate: '2023-12-15'
   })));
 
+  const handleUploadDocument = () => {
+    if (documentToUpload) {
+      setDocuments(prev => prev.map(doc => {
+        if (doc.id === documentToUpload.id) {
+          return {
+            ...doc,
+            issueDate: uploadIssueDate,
+            expiryDate: uploadExpiryDate,
+            uploadDate: new Date().toISOString().split('T')[0],
+            status: 'pending'
+          };
+        }
+        return doc;
+      }));
+    } else {
+      const newDoc = {
+        id: `DOC-NEW-${Date.now()}`,
+        vendorId: 'VEN-001',
+        name: uploadFile ? uploadFile.name : 'New Document',
+        documentType: 'Other',
+        uploadDate: new Date().toISOString().split('T')[0],
+        issueDate: uploadIssueDate,
+        expiryDate: uploadExpiryDate,
+        status: 'pending',
+        fileSize: uploadFile ? `${(uploadFile.size / (1024 * 1024)).toFixed(1)} MB` : '1.0 MB',
+        isRegulatory: false
+      };
+      setDocuments(prev => [...prev, newDoc]);
+    }
+    setIsUploadModalOpen(false);
+  };
+
   const handleSave = () => {
     setIsEditing(false);
     setRegistrationStatus('Correction Requested');
   };
+
+  const isSubmitted = registrationStatus === 'Pending' || registrationStatus === 'Approved';
 
   const getExpiryDays = (expiryDate?: string) => {
     if (!expiryDate) return null;
@@ -504,9 +545,6 @@ export default function VendorProfile() {
             <CardHeader className="px-6 pt-1 pb-0">
               <div className="flex items-center justify-between gap-4">
                 <CardTitle className="text-lg font-bold text-black text-start">{t('Vendor Documents')}</CardTitle>
-                <Button size="sm" disabled={!isEditing} className="bg-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/90 text-white rounded-button text-xs font-semibold h-9 px-4 cursor-pointer">
-                  {t('Upload Document')}
-                </Button>
               </div>
             </CardHeader>
             <CardContent className="px-6 pb-4">
@@ -530,7 +568,16 @@ export default function VendorProfile() {
                           <FileText className="h-5 w-5 text-gray-400 shrink-0" />
                           <div>
                             <div className="font-semibold text-gray-800 text-[14px]">{t(doc.name)}</div>
-                            <div className="text-[11px] text-gray-400 font-medium">{doc.fileSize}</div>
+                            <div className="text-[11px] text-red-500 font-medium">
+                              {doc.expiryDate 
+                                ? (() => {
+                                    const days = getExpiryDays(doc.expiryDate);
+                                    if (days === null) return null;
+                                    if (days < 0) return `${t('Expired')} ${Math.abs(days)} ${t('days ago')}`;
+                                    return `${t('Document Expiry in')} ${days} ${t('Days')}`;
+                                  })()
+                                : null}
+                            </div>
                           </div>
                         </div>
                       </TableCell>
@@ -547,42 +594,38 @@ export default function VendorProfile() {
                       <TableCell className="text-start">
                         <div className="flex items-center gap-2">
                           <StatusBadge status={doc.status} />
-                          {doc.expiryDate && (() => {
-                            const daysRemaining = getExpiryDays(doc.expiryDate);
-                            if (daysRemaining === null || daysRemaining >= 30) return null;
-                            
-                            let iconColor = 'text-blue-500';
-                            if (daysRemaining < 0) {
-                              iconColor = 'text-red-600 animate-pulse';
-                            } else if (daysRemaining <= 15) {
-                              iconColor = 'text-orange-500';
-                            } else {
-                              iconColor = 'text-amber-500';
-                            }
-
-                            return (
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <div className="cursor-help">
-                                      <Info className={`h-4 w-4 ${iconColor}`} />
-                                    </div>
-                                  </TooltipTrigger>
-                                  <TooltipContent className="rounded-lg bg-gray-900 text-white border-none text-[11px] font-semibold px-2 py-1 shadow-md">
-                                    <p>
-                                      {daysRemaining < 0 
-                                        ? `${t('Expired')} ${Math.abs(daysRemaining)} ${t('days ago')}` 
-                                        : `${t('Document expires in')} ${daysRemaining} ${t('days')}`}
-                                    </p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            );
-                          })()}
                         </div>
                       </TableCell>
                       <TableCell className="text-end pe-6">
-                        <div className="flex justify-end">
+                        <div className="flex justify-end gap-1">
+                          {(() => {
+                            const daysRemaining = getExpiryDays(doc.expiryDate);
+                            const isNotVerified = ['not verified', 'not_verified', 'rejected'].includes((doc.status || '').toLowerCase());
+                            const isExpired = daysRemaining !== null && daysRemaining < 0;
+                            if (isNotVerified || isExpired) {
+                              return (
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button size="sm" variant="ghost" onClick={() => {
+                                        setDocumentToUpload(doc);
+                                        setUploadIssueDate(doc.issueDate || '');
+                                        setUploadExpiryDate(doc.expiryDate || '');
+                                        setUploadFile(null);
+                                        setIsUploadModalOpen(true);
+                                      }} className="h-8 w-8 p-0 rounded-full hover:bg-blue-50 flex items-center justify-center text-blue-500 cursor-pointer">
+                                        <Upload className="h-4 w-4" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p className="text-xs font-bold">{t('Upload Replacement')}</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              );
+                            }
+                            return null;
+                          })()}
                           <Button size="sm" variant="ghost" className="h-8 w-8 p-0 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-500 cursor-pointer">
                             <Download className="h-4 w-4" />
                           </Button>
@@ -696,6 +739,59 @@ export default function VendorProfile() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <Dialog open={isUploadModalOpen} onOpenChange={setIsUploadModalOpen}>
+        <DialogContent className="sm:max-w-[450px]">
+          <DialogHeader>
+            <DialogTitle className="text-start text-lg font-bold">{t('Upload Document')}</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col gap-5 py-4">
+            <div className="flex items-center gap-4">
+              <Label htmlFor="file" className="text-start font-bold w-[110px] shrink-0 whitespace-nowrap">
+                {t('Document File')}
+              </Label>
+              <Input
+                id="file"
+                type="file"
+                className="cursor-pointer text-start flex-1"
+                onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
+              />
+            </div>
+            <div className="flex items-center gap-4">
+              <Label htmlFor="issue-date" className="text-start font-bold w-[110px] shrink-0 whitespace-nowrap">
+                {t('Issue Date')}
+              </Label>
+              <Input
+                id="issue-date"
+                type="date"
+                className="text-start flex-1 [&::-webkit-calendar-picker-indicator]:ml-auto"
+                value={uploadIssueDate}
+                onChange={(e) => setUploadIssueDate(e.target.value)}
+              />
+            </div>
+            <div className="flex items-center gap-4">
+              <Label htmlFor="expiry-date" className="text-start font-bold w-[110px] shrink-0 whitespace-nowrap">
+                {t('Expiry Date')}
+              </Label>
+              <Input
+                id="expiry-date"
+                type="date"
+                className="text-start flex-1 [&::-webkit-calendar-picker-indicator]:ml-auto"
+                value={uploadExpiryDate}
+                onChange={(e) => setUploadExpiryDate(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter className="flex justify-end gap-3 mt-2">
+            <Button variant="outline" onClick={() => setIsUploadModalOpen(false)} className="cursor-pointer rounded-button font-semibold h-10 px-4">
+              {t('Cancel')}
+            </Button>
+            <Button type="button" onClick={handleUploadDocument} disabled={!uploadFile} className="bg-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/90 text-white shadow-sm cursor-pointer rounded-button font-semibold h-10 px-6">
+              {t('Upload')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

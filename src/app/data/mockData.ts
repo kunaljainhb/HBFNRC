@@ -940,7 +940,7 @@ export const mockVendorDocuments: VendorDocument[] = [
     documentType: 'Tax Registration Certificate',
     uploadDate: '2023-12-15',
     expiryDate: '2026-12-31',
-    status: 'verified',
+    status: 'rejected',
     fileSize: '1.8 MB',
     isRegulatory: true
   },

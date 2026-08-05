@@ -421,7 +421,16 @@ export default function AdminVendorDetail() {
                         <FileText className="h-5 w-5 text-gray-400 shrink-0" />
                         <div>
                           <div className="font-semibold text-gray-800 text-[14px]">{t(doc.name)}</div>
-                          <div className="text-[11px] text-gray-400 font-medium">{doc.fileSize}</div>
+                          <div className="text-[11px] text-red-500 font-medium">
+                            {doc.expiryDate 
+                              ? (() => {
+                                  const days = getExpiryDays(doc.expiryDate);
+                                  if (days === null) return null;
+                                  if (days < 0) return `${t('Expired')} ${Math.abs(days)} ${t('days ago')}`;
+                                  return `${t('Document Expiry in')} ${days} ${t('Days')}`;
+                                })()
+                              : null}
+                          </div>
                         </div>
                       </div>
                     </TableCell>
@@ -437,26 +446,6 @@ export default function AdminVendorDetail() {
                     <TableCell className="text-start">
                       <div className="flex items-center gap-2">
                         <StatusBadge status={doc.status} />
-                        
-                        {/* Expiry Info Icon beside status */}
-                        {daysRemaining !== null && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <div className="cursor-help">
-                                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${daysRemaining < 30 ? 'bg-red-50 text-red-600 border-red-100' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>
-                                    {daysRemaining < 0 ? t('Expired') : `${daysRemaining} ${t("days left")}`}
-                                  </span>
-                                </div>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p className="text-xs font-bold">
-                                  {daysRemaining < 0 ? `${t("Expired")} ${Math.abs(daysRemaining)} ${t("days ago")}` : `${t("Document expires in")} ${daysRemaining} ${t("days")}`}
-                                </p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )}
                       </div>
                     </TableCell>
                     <TableCell className="text-right pe-6">

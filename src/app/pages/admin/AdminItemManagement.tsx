@@ -51,8 +51,8 @@ export default function AdminItemManagement() {
     );
     
     return approvedProposals.map((proposal) => {
-      // Logic for status: PROP-104 and PROP-108 are mocked as Receiving Completed
-      const status = (proposal.id === 'PROP-104' || proposal.id === 'PROP-108') ? 'Receiving Completed' : 'Receiving Pending';
+      // Logic for status: PROP-104 and PROP-108 are mocked as Goods Received
+      const status = (proposal.id === 'PROP-104' || proposal.id === 'PROP-108') ? 'Goods Received' : 'Pending Verification';
 
       return {
         tenderId: tender.id,
@@ -111,8 +111,9 @@ export default function AdminItemManagement() {
       label: t('Inventory Status'),
       options: [
         { label: t('All Statuses'), value: 'all' },
-        { label: t('Receiving Pending'), value: 'receiving pending' },
-        { label: t('Receiving Completed'), value: 'receiving completed' },
+        { label: t('Pending Verification'), value: 'pending verification' },
+        { label: t('Goods Received'), value: 'goods received' },
+        { label: t('Goods Not Received'), value: 'goods not received' },
       ],
       selectedValue: statusFilter,
       onChange: setStatusFilter
@@ -121,7 +122,7 @@ export default function AdminItemManagement() {
 
   const activeChips = statusFilter !== 'all' ? [
     {
-      label: `${t('Status')}: ${t(statusFilter === 'receiving pending' ? 'Receiving Pending' : 'Receiving Completed')}`,
+      label: `${t('Status')}: ${t(statusFilter === 'pending verification' ? 'Pending Verification' : statusFilter === 'goods received' ? 'Goods Received' : 'Goods Not Received')}`,
       onRemove: () => setStatusFilter('all')
     }
   ] : [];

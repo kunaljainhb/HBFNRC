@@ -74,6 +74,9 @@ export default function AdminItemDetail() {
   const [remark, setRemark] = useState('');
   const [simulatorRemark, setSimulatorRemark] = useState('');
   const [simulatorRole, setSimulatorRole] = useState<'admin' | 'manager'>('admin');
+  const [status, setStatus] = useState<'Pending Verification' | 'Goods Received' | 'Goods Not Received'>(
+    (proposal.id === 'PROP-104' || proposal.id === 'PROP-108') ? 'Goods Received' : 'Pending Verification'
+  );
   const [history, setHistory] = useState([
     {
       id: 1,
@@ -90,6 +93,13 @@ export default function AdminItemDetail() {
       toast.error(t('Please enter a remark for the simulation.'));
       return;
     }
+
+    if (actionType === 'Goods Received') {
+      setStatus('Goods Received');
+    } else if (actionType === 'Goods Not Received') {
+      setStatus('Goods Not Received');
+    }
+
     const newEntry = {
       id: Date.now(),
       date: new Date().toLocaleString(language === 'ar' ? 'ar-AE' : 'en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
@@ -136,7 +146,6 @@ export default function AdminItemDetail() {
   const totalReceivedQty = items.reduce((sum, item) => sum + item.receivedQty, 0);
   const totalAmount = items.reduce((sum, item) => sum + item.amount, 0);
   const remainingQty = totalQty - totalReceivedQty;
-  const status = remainingQty > 0 ? 'Pending' : 'Completed';
 
   return (
     <div className="space-y-6 pb-20">
@@ -246,7 +255,7 @@ export default function AdminItemDetail() {
               <FileSpreadsheet className="h-4 w-4 text-green-600" />
               {t('Item Details')}
             </CardTitle>
-            <CardDescription className="text-sm">{t('Track received quantities for the approved proposal items')}</CardDescription>
+
           </CardHeader>
           <CardContent className="p-0 px-6 pb-6">
             <div className="border rounded-lg overflow-hidden" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
@@ -257,7 +266,7 @@ export default function AdminItemDetail() {
                     <TableHead className="font-bold text-gray-700 text-end py-3">{t('Price (AED)')}</TableHead>
                     <TableHead className="font-bold text-gray-700 text-center py-3">{t('Qty')}</TableHead>
                     <TableHead className="font-bold text-gray-700 text-end py-3">{t('Amount (AED)')}</TableHead>
-                    <TableHead className="font-bold text-[var(--fnrc-primary-green)] text-center w-32 py-3">{t('Received Qty')}</TableHead>
+                    <TableHead className="font-bold text-black text-center w-32 py-3">{t('Received Qty')}</TableHead>
                     <TableHead className="font-bold text-gray-700 text-center w-32 py-3">{t('Remaining Qty')}</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -276,10 +285,11 @@ export default function AdminItemDetail() {
                           value={item.receivedQty}
                           onChange={(e) => handleReceivedQtyChange(index, e.target.value)}
                           className="text-center border-[var(--fnrc-primary-green)] focus-visible:ring-[var(--fnrc-primary-green)] h-9 font-bold"
+                          disabled={status === 'Goods Received'}
                         />
                       </TableCell>
                       <TableCell className="text-center font-bold">
-                        <span className={(item.qty - item.receivedQty) === 0 ? "text-green-600" : "text-amber-600"}>
+                        <span className="text-black">
                           {item.qty - item.receivedQty}
                         </span>
                       </TableCell>
@@ -291,7 +301,7 @@ export default function AdminItemDetail() {
                     <TableCell className="text-right py-3">{totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                     <TableCell className="text-center py-3">{totalReceivedQty}</TableCell>
                     <TableCell className="text-center py-3">
-                      <span className={remainingQty === 0 ? "text-green-600" : "text-amber-600"}>
+                      <span className="text-black">
                         {remainingQty}
                       </span>
                     </TableCell>
@@ -302,85 +312,44 @@ export default function AdminItemDetail() {
           </CardContent>
         </Card>
 
-        {/* Uploaded Documents & Remarks side by side or stacked based on screen */}
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* Uploaded Documents */}
-          <Card>
-            <CardHeader className="pb-3 border-b border-gray-50 mb-4">
-              <CardTitle className="text-base font-bold flex items-center gap-2">
-                <FileText className="h-4 w-4 text-green-600" />
-                {t('Uploaded Documents')}
-              </CardTitle>
-              <CardDescription className="text-sm">{t('Invoices, Delivery Notes, or Certificates')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between rounded-lg border p-3 hover:bg-gray-50/50 transition-colors" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-                  <div className="flex items-center gap-3">
-                    <FileText className="h-5 w-5 text-blue-500" />
-                    <div>
-                      <div className="font-medium text-gray-900 text-sm">Delivery_Note_001.pdf</div>
-                      <div className="text-xs text-gray-500">{t('Uploaded 2 days ago')}</div>
-                    </div>
-                  </div>
-                  <Button size="sm" variant="outline" className="h-8 text-xs font-semibold">
-                    <Download className={`me-2 h-3 w-3 ${language === 'ar' ? 'ms-2 me-0 scale-x-[-1]' : ''}`} /> {t('Download')}
-                  </Button>
-                </div>
-                <div className="flex items-center justify-between rounded-lg border p-3 hover:bg-gray-50/50 transition-colors" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-                  <div className="flex items-center gap-3">
-                    <FileText className="h-5 w-5 text-red-500" />
-                    <div>
-                      <div className="font-medium text-gray-900 text-sm">Tax_Invoice_055.pdf</div>
-                      <div className="text-xs text-gray-500">{t('Uploaded yesterday')}</div>
-                    </div>
-                  </div>
-                  <Button size="sm" variant="outline" className="h-8 text-xs font-semibold">
-                    <Download className={`me-2 h-3 w-3 ${language === 'ar' ? 'ms-2 me-0 scale-x-[-1]' : ''}`} /> {t('Download')}
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Uploaded Documents */}
+        <Card>
+          <CardHeader className="pb-3 border-b border-gray-50 mb-4">
+            <CardTitle className="text-base font-bold flex items-center gap-2">
+              <FileText className="h-4 w-4 text-green-600" />
+              {t('Uploaded Documents')}
+            </CardTitle>
 
-          {/* Inline Administrative Action Card (Remarks) */}
-          <Card className="border-2 border-gray-100 shadow-sm">
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2">
-                <Info className="h-4 w-4 text-amber-500" />
-                <CardTitle className="text-base font-bold">{t('Administrative Review')}</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="remarks" className="font-bold text-sm flex items-center justify-between">
-                    {t('Remarks')}
-                    <span className="text-[9px] text-red-500 font-black uppercase">{t('Required for update')}</span>
-                  </Label>
-                  <Textarea
-                    id="remarks"
-                    placeholder={t('Enter any observation regarding the received items...')}
-                    className="min-h-[100px] resize-none"
-                    value={remark}
-                    onChange={(e) => setRemark(e.target.value)}
-                  />
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex items-center justify-between rounded-lg border p-3 hover:bg-gray-50/50 transition-colors" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                <div className="flex items-center gap-3">
+                  <FileText className="h-5 w-5 text-blue-500" />
+                  <div>
+                    <div className="font-medium text-gray-900 text-sm">Delivery_Note_001.pdf</div>
+                    <div className="text-xs text-gray-500">{t('Uploaded 2 days ago')}</div>
+                  </div>
                 </div>
-
-                <div className="flex justify-end gap-3 pt-2 border-t border-gray-50">
-                  <Button 
-                    className="gap-2 text-white h-10 px-6 font-bold shadow-md shadow-green-600/10 transition-all"
-                    style={{ backgroundColor: 'var(--fnrc-success)' }}
-                    onClick={handleUpdate}
-                  >
-                    <Check className="h-4 w-4" />
-                    {t('Update')}
-                  </Button>
-                </div>
+                <Button size="sm" variant="outline" className="h-8 text-xs font-semibold">
+                  <Download className={`me-2 h-3 w-3 ${language === 'ar' ? 'ms-2 me-0 scale-x-[-1]' : ''}`} /> {t('Download')}
+                </Button>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+              <div className="flex items-center justify-between rounded-lg border p-3 hover:bg-gray-50/50 transition-colors" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                <div className="flex items-center gap-3">
+                  <FileText className="h-5 w-5 text-red-500" />
+                  <div>
+                    <div className="font-medium text-gray-900 text-sm">Tax_Invoice_055.pdf</div>
+                    <div className="text-xs text-gray-500">{t('Uploaded yesterday')}</div>
+                  </div>
+                </div>
+                <Button size="sm" variant="outline" className="h-8 text-xs font-semibold">
+                  <Download className={`me-2 h-3 w-3 ${language === 'ar' ? 'ms-2 me-0 scale-x-[-1]' : ''}`} /> {t('Download')}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Admin Simulator Actions */}
         {simulatorRole === 'admin' && (
@@ -388,7 +357,7 @@ export default function AdminItemDetail() {
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2 text-[var(--fnrc-primary-green)]">
                 <Info className="h-4 w-4" />
-                <CardTitle className="text-base font-bold">{t('Admin Simulator Actions')}</CardTitle>
+                <CardTitle className="text-base font-bold">{t('Remarks')}</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -401,11 +370,21 @@ export default function AdminItemDetail() {
                   onChange={(e) => setSimulatorRemark(e.target.value)}
                 />
               </div>
-              <div className="flex gap-3">
+              <div className="flex justify-end gap-3 pt-2">
+                <Button 
+                  className="gap-2 text-white font-bold shadow-md hover:shadow-lg transition-all"
+                  style={{ backgroundColor: 'var(--fnrc-success)' }}
+                  onClick={handleUpdate}
+                  disabled={status === 'Goods Received'}
+                >
+                  <Check className="h-4 w-4" />
+                  {t('Update')}
+                </Button>
                 <Button 
                   className="text-white font-bold gap-2 shadow-md hover:shadow-lg transition-all"
                   style={{ backgroundColor: 'var(--fnrc-success)' }}
                   onClick={() => handleSimulatorAction('Goods Received')}
+                  disabled={status === 'Goods Received'}
                 >
                   <Check className="h-4 w-4" />
                   {t('Goods Received')}
@@ -414,6 +393,7 @@ export default function AdminItemDetail() {
                   variant="destructive" 
                   className="font-bold gap-2 shadow-md hover:shadow-lg transition-all bg-red-600 hover:bg-red-700"
                   onClick={() => handleSimulatorAction('Goods Not Received')}
+                  disabled={status === 'Goods Received'}
                 >
                   {t('Goods Not Received')}
                 </Button>

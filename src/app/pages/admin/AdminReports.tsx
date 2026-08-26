@@ -1,8 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Button } from '@/app/components/ui/button';
-import { BarChart3, Download, FileText, Calendar, Clock } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
+import { BarChart3, FileText, LayoutList } from 'lucide-react';
 import { useTranslation } from '@/app/context/LanguageContext';
+import { Link } from '@/app/context/RouterContext';
 
 export default function AdminReports() {
   const { t } = useTranslation();
@@ -12,193 +11,65 @@ export default function AdminReports() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
           <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
-            {t('System Reports & Analytics')}
+            {t('System Reports')}
           </h1>
+          <p className="text-gray-500 mt-2">
+            {t('Access and generate system analytics and operational reports.')}
+          </p>
         </div>
       </div>
 
-      <div className="flex flex-col gap-8">
-        {/* Standard Reports */}
-        <Card className="border border-gray-100/50 shadow-sm overflow-hidden h-fit">
-          <CardHeader className="border-b border-gray-50 pb-5">
-            <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
-              <BarChart3 className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-              {t('Standard Reports')}
-            </CardTitle>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {/* Vendor Onboarding Status Report */}
+        <Link to="/admin/reports/vendor-onboarding" className="block group">
+          <Card className="border border-gray-100/50 shadow-sm overflow-hidden h-full transition-all hover:shadow-md hover:border-gray-200">
+            <CardHeader className="border-b border-gray-50 pb-5">
+              <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900 group-hover:text-[var(--fnrc-primary-green)] transition-colors">
+                <BarChart3 className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                {t('Vendor Onboarding Status')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <p className="text-sm text-gray-500 leading-relaxed">
+                {t('View and export detailed status reports of vendor onboarding applications, filtered by date range and service categories.')}
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
 
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="grid gap-6 sm:grid-cols-2">
-              <div className="rounded-2xl border border-gray-100 p-5 bg-gray-50/20 hover:bg-gray-50/40 transition-colors flex flex-col justify-between h-[180px]">
-                <div>
-                  <div className="font-bold text-gray-800 text-sm">
-                    {t('Vendor Registration Summary')}
-                  </div>
-                  <p className="mt-1.5 text-xs text-gray-400 font-medium leading-relaxed">
-                    {t('Aggregate total vendor registration applications segmented by operational categories.')}
-                  </p>
-                </div>
-                <div className="flex gap-2 items-center mt-4">
-                  <Select defaultValue="month">
-                    <SelectTrigger className="w-[120px] rounded-lg border-gray-200 h-9 text-xs">
-                      <SelectValue placeholder={t('Period')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="month">{t('This Month')}</SelectItem>
-                      <SelectItem value="quarter">{t('This Quarter')}</SelectItem>
-                      <SelectItem value="year">{t('This Year')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button size="sm" variant="outline" className="gap-1 h-9 font-semibold text-xs rounded-lg border-gray-200">
-                    <Download className="h-3.5 w-3.5" />
-                    {t('Export')}
-                  </Button>
-                </div>
-              </div>
+        {/* Vendor Wise Tender Report */}
+        <Link to="/admin/reports/vendor-tender" className="block group">
+          <Card className="border border-gray-100/50 shadow-sm overflow-hidden h-full transition-all hover:shadow-md hover:border-gray-200">
+            <CardHeader className="border-b border-gray-50 pb-5">
+              <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900 group-hover:text-[var(--fnrc-primary-green)] transition-colors">
+                <FileText className="h-5 w-5 text-[var(--fnrc-accent-gold)]" />
+                {t('Vendor Wise Tender')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <p className="text-sm text-gray-500 leading-relaxed">
+                {t('Analyze proposals submitted by specific vendors across different tenders and view their current proposal statuses.')}
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
 
-              <div className="rounded-2xl border border-gray-100 p-5 bg-gray-50/20 hover:bg-gray-50/40 transition-colors flex flex-col justify-between h-[180px]">
-                <div>
-                  <div className="font-bold text-gray-800 text-sm">
-                    {t('Tender Activity Report')}
-                  </div>
-                  <p className="mt-1.5 text-xs text-gray-400 font-medium leading-relaxed">
-                    {t('Monitor publishing activity, submission volume, and closed/cancelled tender campaigns.')}
-                  </p>
-                </div>
-                <div className="flex gap-2 items-center mt-4">
-                  <Select defaultValue="month">
-                    <SelectTrigger className="w-[120px] rounded-lg border-gray-200 h-9 text-xs">
-                      <SelectValue placeholder={t('Period')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="month">{t('This Month')}</SelectItem>
-                      <SelectItem value="quarter">{t('This Quarter')}</SelectItem>
-                      <SelectItem value="year">{t('This Year')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button size="sm" variant="outline" className="gap-1 h-9 font-semibold text-xs rounded-lg border-gray-200">
-                    <Download className="h-3.5 w-3.5" />
-                    {t('Export')}
-                  </Button>
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-gray-100 p-5 bg-gray-50/20 hover:bg-gray-50/40 transition-colors flex flex-col justify-between h-[180px]">
-                <div>
-                  <div className="font-bold text-gray-800 text-sm">
-                    {t('Proposal Submission Audit')}
-                  </div>
-                  <p className="mt-1.5 text-xs text-gray-400 font-medium leading-relaxed">
-                    {t('Compare technical and commercial proposal counts and pricing averages per active Tender.')}
-                  </p>
-                </div>
-                <div className="flex gap-2 items-center mt-4">
-                  <Select defaultValue="month">
-                    <SelectTrigger className="w-[120px] rounded-lg border-gray-200 h-9 text-xs">
-                      <SelectValue placeholder={t('Period')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="month">{t('This Month')}</SelectItem>
-                      <SelectItem value="quarter">{t('This Quarter')}</SelectItem>
-                      <SelectItem value="year">{t('This Year')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button size="sm" variant="outline" className="gap-1 h-9 font-semibold text-xs rounded-lg border-gray-200">
-                    <Download className="h-3.5 w-3.5" />
-                    {t('Export')}
-                  </Button>
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-gray-100 p-5 bg-gray-50/20 hover:bg-gray-50/40 transition-colors flex flex-col justify-between h-[180px]">
-                <div>
-                  <div className="font-bold text-gray-800 text-sm">
-                    {t('Supplier Success Ratios')}
-                  </div>
-                  <p className="mt-1.5 text-xs text-gray-400 font-medium leading-relaxed">
-                    {t('Audit performance ratings, response rates, and bid-to-award conversion metrics.')}
-                  </p>
-                </div>
-                <div className="flex gap-2 items-center mt-4">
-                  <Select defaultValue="month">
-                    <SelectTrigger className="w-[120px] rounded-lg border-gray-200 h-9 text-xs">
-                      <SelectValue placeholder={t('Period')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="month">{t('This Month')}</SelectItem>
-                      <SelectItem value="quarter">{t('This Quarter')}</SelectItem>
-                      <SelectItem value="year">{t('This Year')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button size="sm" variant="outline" className="gap-1 h-9 font-semibold text-xs rounded-lg border-gray-200">
-                    <Download className="h-3.5 w-3.5" />
-                    {t('Export')}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Audit Logs */}
-        <Card className="border border-gray-100/50 shadow-sm overflow-hidden h-fit">
-          <CardHeader className="border-b border-gray-50 pb-5">
-            <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
-              <FileText className="h-5 w-5" style={{ color: 'var(--fnrc-accent-gold)' }} />
-              {t('Active System Audit Trail')}
-            </CardTitle>
-
-          </CardHeader>
-          <CardContent className="pt-6 space-y-4">
-            <div className="rounded-xl border border-gray-100 p-4 hover:bg-gray-50/50 transition-colors flex gap-3">
-              <div className="h-8 w-8 rounded-lg bg-emerald-50 text-[var(--fnrc-primary-green)] flex items-center justify-center shrink-0">
-                <FileText className="h-4 w-4" />
-              </div>
-              <div className="space-y-1">
-                <div className="text-sm font-bold text-gray-800">
-                  {t('Vendor Approved')}: TechSolutions LLC
-                </div>
-                <div className="flex items-center gap-3 text-[10px] text-gray-400 font-semibold">
-                  <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> 10:30 AM</span>
-                  <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> 01/02/2026</span>
-                  <span>{t('By')}: Ahmed Al Mansoori</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-xl border border-gray-100 p-4 hover:bg-gray-50/50 transition-colors flex gap-3">
-              <div className="h-8 w-8 rounded-lg bg-emerald-50 text-[var(--fnrc-primary-green)] flex items-center justify-center shrink-0">
-                <FileText className="h-4 w-4" />
-              </div>
-              <div className="space-y-1">
-                <div className="text-sm font-bold text-gray-800">
-                  {t('Tender Published')}: IT Infrastructure Modernization
-                </div>
-                <div className="flex items-center gap-3 text-[10px] text-gray-400 font-semibold">
-                  <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> 02:15 PM</span>
-                  <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> 30/01/2026</span>
-                  <span>{t('By')}: Fatima Al Hammadi</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-xl border border-gray-100 p-4 hover:bg-gray-50/50 transition-colors flex gap-3">
-              <div className="h-8 w-8 rounded-lg bg-emerald-50 text-[var(--fnrc-primary-green)] flex items-center justify-center shrink-0">
-                <FileText className="h-4 w-4" />
-              </div>
-              <div className="space-y-1">
-                <div className="text-sm font-bold text-gray-800">
-                  {t('Proposal Approved')}: PROP-001
-                </div>
-                <div className="flex items-center gap-3 text-[10px] text-gray-400 font-semibold">
-                  <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> 11:00 AM</span>
-                  <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> 28/01/2026</span>
-                  <span>{t('By')}: Mohammed Al Zaabi</span>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Tender Summary Report */}
+        <Link to="/admin/reports/tender-summary" className="block group">
+          <Card className="border border-gray-100/50 shadow-sm overflow-hidden h-full transition-all hover:shadow-md hover:border-gray-200">
+            <CardHeader className="border-b border-gray-50 pb-5">
+              <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900 group-hover:text-[var(--fnrc-primary-green)] transition-colors">
+                <LayoutList className="h-5 w-5 text-blue-500" />
+                {t('Tender Summary')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <p className="text-sm text-gray-500 leading-relaxed">
+                {t('Comprehensive overview of all system tenders, statuses, and total proposals received within a specified date range.')}
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
     </div>
   );

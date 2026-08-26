@@ -60,7 +60,16 @@ const adminNavItems: NavItem[] = [
       { name: 'Vendor Rating Question', href: '/admin/master-data/vendor-rating-question' },
     ]
   },
-  { name: 'Reports', href: '/admin/reports', icon: BarChart3 },
+  { 
+    name: 'Reports', 
+    href: '/admin/reports/vendor-onboarding', 
+    icon: BarChart3,
+    subItems: [
+      { name: 'Vendor Onboarding Status', href: '/admin/reports/vendor-onboarding' },
+      { name: 'Vendor Wise Tender', href: '/admin/reports/vendor-tender' },
+      { name: 'Tender Summary', href: '/admin/reports/tender-summary' },
+    ]
+  },
   { name: 'System Config', href: '/admin/config', icon: Settings },
   { name: 'Content Management', href: '/admin/content', icon: FileEdit },
   { name: 'My Profile', href: '/admin/profile', icon: User },
@@ -76,7 +85,8 @@ export function Sidebar({ role }: SidebarProps) {
 
   // Track expanded menu items. Default Master Data to always expanded (true)
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({
-    'Master Data': true
+    'Master Data': true,
+    'Reports': true
   });
 
   const toggleExpand = (name: string) => {
@@ -101,7 +111,7 @@ export function Sidebar({ role }: SidebarProps) {
           backgroundSize: '100px 100px',
         }}
       />
-      <nav className={cn("flex h-full flex-col gap-1.5 relative z-10", collapsed ? "p-2" : "p-4")}>
+      <nav className={cn("flex h-full flex-col gap-1.5 relative z-10 overflow-y-auto pb-20", collapsed ? "p-2" : "p-4")}>
         {navItems.map((item) => {
           const Icon = item.icon;
           const hasSubItems = !!item.subItems;
